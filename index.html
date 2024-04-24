@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-200 h-screen flex justify-center items-center">
+    <div class="bg-white p-8 rounded shadow-md w-96">
+        <h2 id="form-heading" class="text-2xl font-semibold mb-4">Login</h2>
+
+        <form id="register-form" class="hidden space-y-4">
+            <div>
+                <label for="new-username" class="block font-medium">New Username</label>
+                <input type="text" id="new-username" name="newUsername" class="w-full border rounded px-3 py-2 mt-1">
+            </div>
+            <div>
+                <label for="new-password" class="block font-medium">New Password</label>
+                <input type="password" id="new-password" name="newPassword" class="w-full border rounded px-3 py-2 mt-1">
+            </div>
+            <div class="flex justify-between">
+                <button type="submit" class="w-full bg-green-500 text-white rounded px-4 py-2">Register</button>
+                <button type="button" id="back-to-login" class="w-full bg-gray-400 text-white rounded px-4 py-2 ml-2">Back</button>
+            </div>
+        </form>
+
+        <form id="login-form" class="space-y-4">
+            <div>
+                <label for="username" class="block font-medium">Username</label>
+                <input type="text" id="username" name="username" class="w-full border rounded px-3 py-2 mt-1">
+            </div>
+            <div>
+                <label for="password" class="block font-medium">Password</label>
+                <input type="password" id="password" name="password" class="w-full border rounded px-3 py-2 mt-1">
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white rounded px-4 py-2">Login</button>
+        </form>
+
+        <div id="register-message" class="flex justify-between items-center mt-4">
+            <p class="text-sm">Create an account?</p>
+            <button id="toggle-register" class="underline text-blue-500 cursor-pointer">Register</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to handle form submission
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const url = form.id === 'login-form' ? '/login' : '/signup';
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData)),
+                });
+                if (response.ok) {
+                    alert(await response.text());
+                } else {
+                    alert(`Error: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Add event listeners to form submissions
+        document.getElementById('login-form').addEventListener('submit', handleFormSubmit);
+        document.getElementById('register-form').addEventListener('submit', handleFormSubmit);
+
+        // Toggle between login and register forms
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const toggleRegisterButton = document.getElementById('toggle-register');
+        const formHeading = document.getElementById('form-heading');
+        const registerMessage = document.getElementById('register-message');
+        const backToLoginButton = document.getElementById('back-to-login');
+
+        function toggleRegisterForm() {
+            loginForm.classList.toggle('hidden');
+            registerForm.classList.toggle('hidden');
+            if (registerForm.classList.contains('hidden')) {
+                formHeading.textContent = 'Login';
+                registerMessage.classList.remove('hidden');
+            } else {
+                formHeading.textContent = 'Register';
+                registerMessage.classList.add('hidden');
+            }
+        }
+
+        toggleRegisterButton.addEventListener('click', toggleRegisterForm);
+        backToLoginButton.addEventListener('click', toggleRegisterForm);
+    </script>
+</body>
+
+</html>
